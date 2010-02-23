@@ -1,7 +1,7 @@
 #!/bin/bash
 #	Shell script to download and install Vim with the latest patches applied.
 #
-APPNAME=vim2								# app name
+APPNAME=vim									# app name
 APPSDIR=apps								# apps dir
 BUILDDIR=build								# build directory
 INSTALLPATH=$HOME/$APPSDIR/$APPNAME	# full install path
