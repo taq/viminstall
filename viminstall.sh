@@ -5,13 +5,38 @@ APPSDIR=build							# just a directory under your $HOME dir where apps will be i
 INSTALLDIR=$HOME/$APPSDIR/vim2	# this app, of course, is called vim
 COMPILEDBY=TaQ							# put your name here to show it with :version
 
+echo ===============================================================================
+echo Viminstall 
+echo Find, download, extract, configure and install the latest Vim version.
+echo Check for the latest version of this script on http://github.com/taq/viminstall
+echo ===============================================================================
+
+# check for some tools needed
+LYNXCHECK=$(which lynx)
+if [ -z "$LYNXCHECK" ]; then
+	echo I need lynx to work, but you dont have it installed.
+	exit 1
+fi
+
+WGETCHECK=$(which wget)
+if [ -z "$WGETCHECK" ]; then
+	echo I need wget to work, but you dont have it installed.
+	exit 2
+fi
+
+PATCHCHECK=$(which patch)
+if [ -z "$PATCHCHECK" ]; then
+	echo I need patch to work, but you dont have it installed.
+	exit 3
+fi
+
 # create the directory if it does not exists
 if [ ! -d $INSTALLDIR ]; then
 	mkdir -p $INSTALLDIR
 fi	
 cd $INSTALLDIR
 
-echo Building a new Vim version
+echo Installing a new Vim version on $INSTALLDIR
 URL=ftp://ftp.vim.org/pub/vim/unix/
 echo Checking for the latest version on $URL
 LATEST_SOURCE=$(lynx --source $URL | grep -o "vim-[a-z0-9\.\-]\+\.bz2" | sort | uniq | tail -n1)
@@ -89,7 +114,7 @@ if [ "$?" -ne "0" ]; then
 	echo and
 	echo make install
 	echo to complete the installation.
-	exit 1
+	exit 4
 fi
 
 # and here we go
