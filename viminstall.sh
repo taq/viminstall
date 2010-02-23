@@ -1,9 +1,12 @@
 #!/bin/bash
 #	Shell script to download and install Vim with the latest patches applied.
 #
-APPSDIR=build							# just a directory under your $HOME dir where apps will be installed
-INSTALLDIR=$HOME/$APPSDIR/vim2	# this app, of course, is called vim
-COMPILEDBY=TaQ							# put your name here to show it with :version
+APPNAME=vim2								# app name
+APPSDIR=apps								# apps dir
+BUILDDIR=build								# build directory
+INSTALLPATH=$HOME/$APPSDIR/$APPNAME	# full install path
+BUILDPATH=$HOME/$BUILDDIR/$APPNAME	# full build path
+COMPILEDBY=TaQ								# put your name here to show it with :version
 
 echo ===============================================================================
 echo Viminstall 
@@ -31,12 +34,12 @@ if [ -z "$PATCHCHECK" ]; then
 fi
 
 # create the directory if it does not exists
-if [ ! -d $INSTALLDIR ]; then
-	mkdir -p $INSTALLDIR
+if [ ! -d $BUILDPATH ]; then
+	mkdir -p $BUILDPATH
 fi	
-cd $INSTALLDIR
+cd $BUILDPATH
 
-echo Installing a new Vim version on $INSTALLDIR
+echo Installing a new Vim version on $INSTALLPATH
 URL=ftp://ftp.vim.org/pub/vim/unix/
 echo Checking for the latest version on $URL
 LATEST_SOURCE=$(lynx --source $URL | grep -o "vim-[a-z0-9\.\-]\+\.bz2" | sort | uniq | tail -n1)
@@ -104,7 +107,7 @@ fi
 --enable-fontset \
 --with-features=huge \
 --with-compiledby=$COMPILEDBY \
---prefix=$INSTALLDIR
+--prefix=$INSTALLPATH
 
 # if there were some erros, get out
 if [ "$?" -ne "0" ]; then
