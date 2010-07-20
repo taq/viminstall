@@ -7,6 +7,8 @@ BUILDDIR=build								# build directory
 INSTALLPATH=$HOME/$APPSDIR/$APPNAME	# full install path
 BUILDPATH=$HOME/$BUILDDIR/$APPNAME	# full build path
 COMPILEDBY=TaQ								# put your name here to show it with :version
+SOURCEURL=ftp://ftp.vim.org/pub/vim/unix/
+PATCHESURL=ftp://ftp.vim.org/pub/vim/patches/
 
 echo ===============================================================================
 echo Viminstall 
@@ -33,14 +35,27 @@ if [ -z "$PATCHCHECK" ]; then
 	exit 3
 fi
 
+# check if unstable was specified
+while getopts "hu" OPTION; do
+	case $OPTION in 
+		h) echo Usage: viminstall.sh [-u]; exit 0
+		;;
+		u) echo "*** WARNING! Using unstable branch! ***"
+         SOURCEURL=ftp://ftp.vim.org/pub/vim/unstable/unix/; 
+         PATCHESURL=ftp://ftp.vim.org/pub/vim/unstable/patches/;
+		;;
+	esac		
+done
+
 # create the directory if it does not exists
 if [ ! -d $BUILDPATH ]; then
 	mkdir -p $BUILDPATH
 fi	
+echo Moving to $BUILDPATH 
 cd $BUILDPATH
 
 echo Installing a new Vim version on $INSTALLPATH
-URL=ftp://ftp.vim.org/pub/vim/unix/
+URL=$SOURCEURL
 echo Checking for the latest version on $URL
 LATEST_SOURCE=$(lynx --source $URL | grep -o "vim-[a-z0-9\.\-]\+\.bz2" | sort | uniq | tail -n1)
 echo Latest Vim version is $LATEST_SOURCE
@@ -52,19 +67,19 @@ echo Extracting it ...
 tar xvjf $LATEST_SOURCE 2>&1 > /dev/null
 
 # find the vim dir after extracted
-VIMDIR=$(find -type d -iname 'vim*')
+VIMDIR=$(find -type d -iname 'vim*' | sort | tail -n1)
 echo Vim dir is $VIMDIR
 cd $VIMDIR
 
 # find the vim version
-VIMVER=$(echo $VIMDIR | grep -o "[0-9]\+")
+VIMVER=$(echo $VIMDIR | grep -o "[0-9]\+[a-z]\?")
 VIMVERMAJOR=$(echo $VIMVER | cut -c1)
-VIMVERMINOR=$(echo $VIMVER | cut -c2)
-echo Checking patches for version $VIMVERMAJOR.$VIMVERMINOR ...
+VIMVERMINOR=$(echo $VIMVER | cut -c2-)
+VIMPATCHES=$PATCHESURL$VIMVERMAJOR.$VIMVERMINOR
+echo Checking patches for version $VIMVERMAJOR.$VIMVERMINOR on $VIMPATCHES ...
 
 # check if there are patches to download
-VIMPATCHES=ftp://ftp.vim.org/pub/vim/patches/$VIMVERMAJOR.$VIMVERMINOR
-PATCHES=$(lynx --source ftp://ftp.vim.org/pub/vim/patches/7.2/ | grep -o "7\.2[0-9\.]\+" | sort | uniq)
+PATCHES=$(lynx --source $VIMPATCHES | grep -o "$VIMVERMAJOR\.$VIMVERMINOR[0-9\.]\+" | sort | uniq)
 
 if [ -z "$PATCHES" ]; then
 	echo No patches found.
