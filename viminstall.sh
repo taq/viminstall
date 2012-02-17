@@ -47,7 +47,12 @@ while getopts "hu" OPTION; do
 	esac		
 done
 
-# create the directory if it does not exists
+# create the install directory if it does not exists
+if [ ! -d $INSTALLPATH ]; then
+	mkdir -p $INSTALLPATH
+fi	
+
+# create the build directory if it does not exists
 if [ ! -d $BUILDPATH ]; then
 	mkdir -p $BUILDPATH
 fi	
