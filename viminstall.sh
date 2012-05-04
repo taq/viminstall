@@ -17,9 +17,9 @@ echo Check for the latest version of this script on http://github.com/taq/vimins
 echo ===============================================================================
 
 # check for some tools needed
-LYNXCHECK=$(which lynx)
-if [ -z "$LYNXCHECK" ]; then
-	echo I need lynx to work, but you dont have it installed.
+CURLCHECK=$(which curl)
+if [ -z "$CURLCHECK" ]; then
+	echo I need curl to work, but you dont have it installed.
 	exit 1
 fi
 
@@ -62,7 +62,7 @@ cd $BUILDPATH
 echo Installing a new Vim version on $INSTALLPATH
 URL=$SOURCEURL
 echo Checking for the latest version on $URL
-LATEST_SOURCE=$(lynx --source $URL | grep -o "vim-[a-z0-9\.\-]\+\.bz2" | sort | uniq | tail -n1)
+LATEST_SOURCE=$(curl $URL | grep -o "vim-[a-z0-9\.\-]\+\.bz2" | sort | uniq | tail -n1)
 echo Latest Vim version is $LATEST_SOURCE
 
 echo Downloading it ...
@@ -84,7 +84,7 @@ VIMPATCHES=$PATCHESURL$VIMVERMAJOR.$VIMVERMINOR
 echo Checking patches for version $VIMVERMAJOR.$VIMVERMINOR on $VIMPATCHES ...
 
 # check if there are patches to download
-PATCHES=$(lynx --source $VIMPATCHES | grep -o "$VIMVERMAJOR\.$VIMVERMINOR[0-9\.]\+" | sort | uniq)
+PATCHES=$(curl $VIMPATCHES/ | grep -o "$VIMVERMAJOR\.$VIMVERMINOR[0-9\.]\+" | sort | uniq)
 
 if [ -z "$PATCHES" ]; then
 	echo No patches found.
